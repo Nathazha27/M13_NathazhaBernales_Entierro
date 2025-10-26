@@ -2,17 +2,13 @@
 #include "entierrodraw.h"
 #include <map>
 #include<string>
+#include<iostream>
 using namespace std;
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
 
 map<char, Model> models;
 
-int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, char** level_floor)
+int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, char** level_floor, char** level_stage, char** level_objects)
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
 
@@ -28,13 +24,19 @@ int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, cha
 
     float cubeSize = 1.0f;
 
-    for (map<char, string>::iterator texture = textures_files.begin(); texture != textures_files.end(); ++texture) {
-        Texture2D tmp = LoadTexture(texture->second.c_str());
+    for (map<char, string>::iterator it = textures_files.begin(); it != textures_files.end(); ++it) {
+        Texture2D texture = LoadTexture(it->second.c_str());
+        if (texture.id == 0) {
+            cout << "Error: No se ha cargado la textura: " << it->second << endl;
+        }
+        else {
+            cout << "Textura cargada correctamente: " << it->second << endl;
+        }
 
         Mesh mesh = GenMeshCube(cubeSize, cubeSize, cubeSize);
         Model model = LoadModelFromMesh(mesh);
-        model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = tmp;
-        models.insert({texture->first, model});
+        model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+        models.insert({ it->first, model});
     }
 
     float offset = 0.0f;
@@ -42,9 +44,10 @@ int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, cha
         offset = 0.5f;
     }
     float initPosZ = level_h/2 * -1 + offset;
-    if (level_h % 2 != 0) {
+    if (level_w % 2 != 0) {
         offset = 0.0f;
     }
+
     float initPosX = level_w/2 * -1 + offset;
     Vector3 cubePosition = { initPosX, offset, initPosZ };
 
@@ -69,9 +72,15 @@ int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, cha
 
         for (int i = 0; i < level_h; i++) {
             for (int j = 0; j < level_w; j++) {
-                /*DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, RED);
-                DrawCubeWires(cubePosition, cubeSize, cubeSize, cubeSize, GREEN);*/
                 if (level_floor[i][j] != 0) {
+                    DrawModel(models[level_floor[i][j]], cubePosition, cubeSize, WHITE);
+                }
+                if (level_stage[i][j] != 0) {
+                    Vector3 stagePos = { cubePosition.x, cubePosition.y + cubeSize, cubePosition.z };
+                    DrawModel(models[level_stage[i][j]], stagePos, cubeSize, WHITE);
+                }
+                if (level_objects[i][j] == '@') {
+
                 }
                 cubePosition.x += cubeSize;
             }
