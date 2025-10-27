@@ -49,7 +49,19 @@ int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, cha
     }
 
     float initPosX = level_w/2 * -1 + offset;
-    Vector3 cubePosition = { initPosX, offset, initPosZ };
+    Vector3 floorPos = { initPosX, offset, initPosZ };
+    Vector3 stagePos;
+
+    Vector3 playerPos;
+    const char player = '@';
+
+    for (int i = 0; i < level_h; i++) {
+        for (int j = 0; j < level_w; j++) {
+            if (level_objects[i][j] == player) {
+                playerPos = { initPosX + j * cubeSize, offset + cubeSize, initPosZ + i * cubeSize};
+            }
+        }
+    }
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -73,22 +85,24 @@ int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, cha
         for (int i = 0; i < level_h; i++) {
             for (int j = 0; j < level_w; j++) {
                 if (level_floor[i][j] != 0) {
-                    DrawModel(models[level_floor[i][j]], cubePosition, cubeSize, WHITE);
+                    DrawModel(models[level_floor[i][j]], floorPos, cubeSize, WHITE);
                 }
+                stagePos = { floorPos.x, floorPos.y + cubeSize, floorPos.z }; 
                 if (level_stage[i][j] != 0) {
-                    Vector3 stagePos = { cubePosition.x, cubePosition.y + cubeSize, cubePosition.z };
                     DrawModel(models[level_stage[i][j]], stagePos, cubeSize, WHITE);
                 }
-                if (level_objects[i][j] == '@') {
-
+                if (level_objects[i][j] != player && level_objects[i][j] != 0) {
+                    DrawModel(models[level_objects[i][j]], stagePos, cubeSize, WHITE);
                 }
-                cubePosition.x += cubeSize;
+                floorPos.x += cubeSize;
             }
-            cubePosition.x = initPosX;
-            cubePosition.z += cubeSize;
+            floorPos.x = initPosX;
+            floorPos.z += cubeSize;
         }
 
-        cubePosition = { initPosX, offset, initPosZ };
+        DrawSphere(playerPos, 0.5f, RED);
+
+        floorPos = { initPosX, offset, initPosZ };
 
         DrawGrid(10, 1.0f);
 
