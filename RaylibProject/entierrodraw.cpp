@@ -63,19 +63,19 @@ int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, cha
         }
     }
 
+    float speed = 0.05f;
+
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
+        if (IsKeyDown(KEY_W)) playerPos.z -= speed;
+        else if (IsKeyDown(KEY_S)) playerPos.z += speed;
+        else if (IsKeyDown(KEY_A)) playerPos.x -= speed;
+        else if (IsKeyDown(KEY_D)) playerPos.x += speed;
 
-        // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
