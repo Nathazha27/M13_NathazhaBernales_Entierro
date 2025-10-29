@@ -268,7 +268,7 @@ int main()
 
     level_file.close();
 
-    Entierro_draw(level_h, level_w, textures_files, floor, stage, objects);
+    Entierro_draw(level_h, level_w, textures_files, floor, stage, objects, collisions);
 
     return 0;
 }

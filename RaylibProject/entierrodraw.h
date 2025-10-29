@@ -2,4 +2,4 @@
 #include <map>
 #include<string>
 using namespace std;
-int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, char** level_floor, char** level_stage, char** level_objects);
+int Entierro_draw(int level_h, int level_w, map<char, string>textures_files, char** level_floor, char** level_stage, char** level_objects, char** level_collisions);
